@@ -1,0 +1,25 @@
+app:
+  name: "rechat"
+  author: "dashu"
+  mode: "debug"
+
+server:
+  port: 9090
+  read_timeout: 60
+  write_timeout: 60
+
+db:
+  type: "mysql"
+  user: "root"
+  password: ""
+  port: 3306
+  dbname: ""
+  db_config: "charset=utf8mb4&parseTime=True&loc=Local"
+
+log:
+  level: "info"
+  filename: "/app.log"
+  max_size: 100
+  max_age: 30
+  max_backups: 7
+  compress: false
