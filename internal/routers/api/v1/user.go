@@ -22,7 +22,7 @@ func (u *UserRouter) Register(c *gin.Context) {
 		return
 	}
 	//先判断用户名是否已存在
-	if ok := u.UserSrv.ExistUserByName(*user.Username); ok {
+	if ok := u.UserSrv.ExistUserByName(user.Username); ok {
 		zap.L().Info("用户已存在！")
 		c.JSON(http.StatusFound, gin.H{
 			"code":    302,
@@ -30,13 +30,13 @@ func (u *UserRouter) Register(c *gin.Context) {
 		})
 	}
 	//如果不存在再将用户密码加密
-	passwordHash, err := service.HashPassword(string(*user.PasswordHash))
+	passwordHash, err := service.HashPassword(string(user.PasswordHash))
 	if err != nil {
 		zap.L().Error("密码加密失败: ", zap.Any("err", err))
 		return
 	}
 	//再创建用户，存入数据库
-	if err := u.UserSrv.Register(models.User{Username: user.Username, PasswordHash: &passwordHash}); err != nil {
+	if err := u.UserSrv.Register(models.User{Username: user.Username, PasswordHash: passwordHash}); err != nil {
 		zap.L().Error("用户创建失败: ", zap.Any("err", err))
 		return
 	}

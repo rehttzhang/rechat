@@ -40,9 +40,9 @@ func (u *UserService) Register(user models.User) error {
 }
 
 //Login 登录
-func (u *UserService) Login(user models.User) (*models.User, error) {
+func (u *UserService) Login(user *models.User) (*models.User, error) {
 	var userInfo models.User
-	passwordHash, err := HashPassword(*user.Username)
+	passwordHash, err := HashPassword(string(user.PasswordHash))
 	if err != nil {
 		return nil, err
 	}
@@ -53,15 +53,28 @@ func (u *UserService) Login(user models.User) (*models.User, error) {
 	return &userInfo, nil
 }
 
-//UpdateUserPassword ...
-func (u *UserService) UpdateUserPassword()
+//UpdateUserPassword 更改密码
+func (u *UserService) UpdateUserPassword(user *models.User, newPassword string) (*models.User, error) {
+	var userInfo models.User
+	passwordHash, err := HashPassword(newPassword)
+	if err != nil {
+		return nil, err
+	}
+	err = u.DB.Table("user").Where("username = ? AND password_hash = ?", user.Username, user.PasswordHash).
+		First(&userInfo).
+		Update("password", passwordHash).Error
+	if err != nil {
+		return nil, err
+	}
+	return &userInfo, nil
+}
 
 //CheckPassword 检验用户密码
 func CheckPassword(user *models.User, password string) error {
-	if user.PasswordHash != nil && len(*user.PasswordHash) == 0 {
+	if user.PasswordHash != nil && len(user.PasswordHash) == 0 {
 		return errors.New("密码未设置")
 	}
-	return bcrypt.CompareHashAndPassword(*user.PasswordHash, []byte(password))
+	return bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(password))
 }
 
 //HashPassword 将密码哈希加密

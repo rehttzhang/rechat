@@ -12,7 +12,7 @@ func NewConfig() error {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("/internal/configs/")
-	viper.AddConfigPath("./configs")
+	viper.AddConfigPath("../../configs")
 
 	viper.WatchConfig()
 	viper.OnConfigChange(func(e fsnotify.Event) {
