@@ -50,11 +50,11 @@ func getEncooder() zapcore.Encoder {
 //日志切割
 func getLogWriter() zapcore.WriteSyncer {
 	lumberjackLogger := &lumberjack.Logger{
-		Filename:   "./test.log", //日志文件位置
-		MaxSize:    10,
-		MaxAge:     30,
-		MaxBackups: 5,
-		Compress:   false,
+		Filename:   viper.GetString("log.filename"), //日志文件位置
+		MaxSize:    viper.GetInt("olog.max_size"),
+		MaxAge:     viper.GetInt("log.max_age"),
+		MaxBackups: viper.GetInt("log.max_backups"),
+		Compress:   viper.GetBool("log.compress"),
 	}
 	return zapcore.AddSync(lumberjackLogger)
 }

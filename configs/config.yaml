@@ -2,6 +2,7 @@ app:
   name: "rechat"
   author: "dashu"
   mode: "debug"
+  cost: 12 # 密码加密成本
 
 server:
   port: 9090
