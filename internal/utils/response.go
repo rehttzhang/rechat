@@ -17,3 +17,6 @@ func SuccessResponse(ctx *gin.Context, code int, message string, data interface{
 		Data:    data,
 	})
 }
+
+//ErrorResponse ...
+func ErrorResponse(ctx *gin.Context, code int, message string) {}

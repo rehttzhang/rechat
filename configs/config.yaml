@@ -24,3 +24,8 @@ log:
   max_age: 30
   max_backups: 7
   compress: false
+
+token:
+  my_secret: "mySecret"
+  expire_at: 30 # token过期时间30天
+  refresh_time: 30 #刷新时间30分钟

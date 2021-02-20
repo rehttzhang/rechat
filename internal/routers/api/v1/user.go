@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"rechat/internal/models"
 	"rechat/internal/service"
+	"rechat/internal/utils"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -41,12 +42,35 @@ func (u *UserRouter) Register(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"code":    201,
-		"message": "注册成功！",
-		"data":    nil,
-	})
+	utils.SuccessResponse(c, http.StatusCreated, "注册成功！", nil)
+
+	// c.JSON(http.StatusCreated, gin.H{
+	// 	"code":    201,
+	// 	"message": "注册成功！",
+	// 	"data":    nil,
+	// })
 }
 
 //Login 登录
-func (u *UserRouter) Login(c *gin.Context) {}
+func (u *UserRouter) Login(c *gin.Context) {
+	//1. 获取登录请求携带的用户名，密码数据
+	var user models.User
+	if err := c.ShouldBindJSON(&user); err != nil {
+		zap.L().Error("Error binding user when login", zap.Any("err", err))
+		return
+	}
+	//2. 去数据库校验用户名和密码是否正确
+	loginUser, err := u.UserSrv.Login(&user)
+	if err != nil {
+		zap.L().Error("Can't login in", zap.Any("err", err))
+		return
+	}
+	//3. 生成JWT Token
+	token, err := utils.GenToken(loginUser.ID)
+	if err != nil {
+		zap.L().Error("Error getting token with loginUser", zap.Any("err", err))
+		return
+	}
+	//4. 返回响应
+	utils.SuccessResponse(c, http.StatusOK, "登录成功!", token)
+}
