@@ -20,7 +20,9 @@ type MyClaims struct {
 
 var mySecret = []byte(viper.GetString("token.my_secret"))
 
-var tokenExpireTime = time.Hour * 24 * 30
+var tokenExpireTime = time.Minute * time.Duration(viper.GetInt("token.expire_time"))
+
+//var tokenRefreshTime = time.Hour * time.Duration(viper.GetInt("token.refresh_time"))
 
 //GenToken 生成token
 func GenToken(userID uint) (string, error) {
@@ -46,7 +48,7 @@ func GenToken(userID uint) (string, error) {
 //ParseToken 解析token
 func ParseToken(tokenString string) (*MyClaims, error) {
 	//解析鉴权声明
-	tokenClaims, err := jwt.ParseWithClaims(tokenString, &MyClaims{}, func(token *jwt.Token) (i interface{}, err error) {
+	tokenClaims, err := jwt.ParseWithClaims(tokenString, &MyClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return mySecret, nil
 	})
 	if tokenClaims != nil {

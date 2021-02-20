@@ -1,22 +1,42 @@
 package utils
 
-import "github.com/gin-gonic/gin"
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
 
 //ResponseData ...
 type ResponseData struct {
-	Code    int         `json:"code"`
+	Code    MyCode      `json:"code"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
 }
 
 //SuccessResponse ...
-func SuccessResponse(ctx *gin.Context, code int, message string, data interface{}) {
+func SuccessResponse(ctx *gin.Context, code int, data interface{}) {
 	ctx.JSON(code, &ResponseData{
-		Code:    code,
-		Message: message,
+		Code:    CodeSuccess,
+		Message: CodeSuccess.GetMsg(),
 		Data:    data,
 	})
 }
 
-//ErrorResponse ...
-func ErrorResponse(ctx *gin.Context, code int, message string) {}
+//ErrorResponse 根据错误状态码返回响应
+func ErrorResponse(ctx *gin.Context, code int, c MyCode) {
+	rd := &ResponseData{
+		Code:    c,
+		Message: c.GetMsg(),
+		Data:    nil,
+	}
+	ctx.JSON(code, rd)
+}
+
+//ErrorWithMsgResponse 自定义错误响应
+func ErrorWithMsgResponse(ctx *gin.Context, code MyCode, errMsg string) {
+	ctx.JSON(http.StatusBadRequest, &ResponseData{
+		Code:    code,
+		Message: code.GetMsg(),
+		Data:    nil,
+	})
+}

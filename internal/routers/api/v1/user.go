@@ -18,7 +18,7 @@ type UserRouter struct {
 //Register 注册
 func (u *UserRouter) Register(c *gin.Context) {
 	user := models.User{}
-	if err := c.ShouldBind(&user); err != nil {
+	if err := c.ShouldBindJSON(&user); err != nil {
 		zap.L().Error("Error binding user for register: ", zap.Any("err", err))
 		return
 	}
@@ -42,7 +42,7 @@ func (u *UserRouter) Register(c *gin.Context) {
 		return
 	}
 
-	utils.SuccessResponse(c, http.StatusCreated, "注册成功！", nil)
+	utils.SuccessResponse(c, http.StatusCreated, "注册成功！")
 
 	// c.JSON(http.StatusCreated, gin.H{
 	// 	"code":    201,
@@ -72,5 +72,5 @@ func (u *UserRouter) Login(c *gin.Context) {
 		return
 	}
 	//4. 返回响应
-	utils.SuccessResponse(c, http.StatusOK, "登录成功!", token)
+	utils.SuccessResponse(c, http.StatusOK, map[string]interface{}{"登录成功！": token})
 }

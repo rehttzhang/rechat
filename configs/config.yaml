@@ -17,6 +17,11 @@ db:
   dbname: ""
   db_config: "charset=utf8mb4&parseTime=True&loc=Local"
 
+redis:
+  port: 6379
+  password: ""
+  db: 0
+
 log:
   level: "info"
   filename: "/app.log"
@@ -27,5 +32,5 @@ log:
 
 token:
   my_secret: "mySecret"
-  expire_at: 30 # token过期时间30天
-  refresh_time: 30 #刷新时间30分钟
+  expire_time: 30 # token过期时间30分钟
+  refresh_time: 30 #刷新时间30天
