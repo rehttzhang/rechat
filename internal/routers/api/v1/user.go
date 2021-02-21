@@ -17,7 +17,7 @@ type UserRouter struct {
 
 //Register 注册
 func (u *UserRouter) Register(c *gin.Context) {
-	userInfo := models.UserInfo{}
+	userInfo := models.User{}
 	if err := c.ShouldBindJSON(&userInfo); err != nil {
 		zap.L().Error("Error binding user for register: ", zap.Any("err", err))
 		utils.ErrorResponse(c, utils.CodeInvalidParams)
@@ -32,13 +32,13 @@ func (u *UserRouter) Register(c *gin.Context) {
 		utils.ErrorResponse(c, utils.CodeUserExist)
 	}
 	//如果不存在再将用户密码加密
-	passwordHash, err := service.HashPassword(userInfo.Password)
+	passwordHash, err := service.HashPassword(userInfo.PasswordHash)
 	if err != nil {
 		zap.L().Error("密码加密失败: ", zap.Any("err", err))
 		return
 	}
 	//再创建用户，存入数据库
-	if err := u.UserSrv.Register(models.User{Username: userInfo.Username, PasswordHash: passwordHash}); err != nil {
+	if err := u.UserSrv.Register(models.User{Username: userInfo.Username, PasswordHash: string(passwordHash)}); err != nil {
 		zap.L().Error("用户创建失败: ", zap.Any("err", err))
 		return
 	}
@@ -49,7 +49,7 @@ func (u *UserRouter) Register(c *gin.Context) {
 //Login 登录
 func (u *UserRouter) Login(c *gin.Context) {
 	//1. 获取登录请求携带的用户名，密码数据
-	var userInfo models.UserInfo
+	var userInfo models.User
 	if err := c.ShouldBindJSON(&userInfo); err != nil {
 		zap.L().Error("Error binding user when login", zap.Any("err", err))
 		utils.ErrorResponse(c, utils.CodeInvalidParams)
@@ -61,7 +61,7 @@ func (u *UserRouter) Login(c *gin.Context) {
 		return
 	}
 	//3. 去数据库校验用户密码是否和输入密码一致
-	err = service.CheckPassword(user, userInfo.Password)
+	err = service.CheckPassword(user, userInfo.PasswordHash)
 	if err != nil {
 		zap.L().Error("Can't login in", zap.Any("err", err))
 		utils.ErrorResponse(c, utils.CodeInvalidPassword)

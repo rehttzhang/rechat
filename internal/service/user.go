@@ -67,10 +67,10 @@ func (u *UserService) UpdateUserPassword(user *models.User, newPassword string) 
 
 //CheckPassword 验证用户密码
 func CheckPassword(user *models.User, password string) error {
-	if user.PasswordHash != nil && len(user.PasswordHash) == 0 {
+	if user.PasswordHash != "" {
 		return errors.New("密码未设置")
 	}
-	return bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(password))
+	return bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 }
 
 //HashPassword 将密码哈希加密
