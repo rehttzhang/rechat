@@ -10,10 +10,10 @@ import (
 )
 
 //UserInterface ...
-type UserInterface interface {
-	Register(user models.User) error
-	ExistUserByName(username string) bool
-}
+// type UserInterface interface {
+// 	Register(user models.User) error
+// 	ExistUserByName(username string) bool
+// }
 
 //UserService ...
 type UserService struct {
@@ -39,18 +39,14 @@ func (u *UserService) Register(user models.User) error {
 	return nil
 }
 
-//Login 登录
-func (u *UserService) Login(user *models.User) (*models.User, error) {
-	var userInfo models.User
-	passwordHash, err := HashPassword(string(user.PasswordHash))
+//GetUserByName 根据用户名获取用户
+func (u *UserService) GetUserByName(username string) (*models.User, error) {
+	var user models.User
+	err := u.DB.Table("user").Where("username = ?", username).First(&user).Error
 	if err != nil {
 		return nil, err
 	}
-	err = u.DB.Table("user").Where("username = ? AND password_hash = ?", user.Username, &passwordHash).First(&userInfo).Error
-	if err != nil {
-		return nil, err
-	}
-	return &userInfo, nil
+	return &user, nil
 }
 
 //UpdateUserPassword 更改密码
@@ -69,7 +65,7 @@ func (u *UserService) UpdateUserPassword(user *models.User, newPassword string) 
 	return &userInfo, nil
 }
 
-//CheckPassword 检验用户密码
+//CheckPassword 验证用户密码
 func CheckPassword(user *models.User, password string) error {
 	if user.PasswordHash != nil && len(user.PasswordHash) == 0 {
 		return errors.New("密码未设置")

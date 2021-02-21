@@ -23,13 +23,13 @@ func SuccessResponse(ctx *gin.Context, code int, data interface{}) {
 }
 
 //ErrorResponse 根据错误状态码返回响应
-func ErrorResponse(ctx *gin.Context, code int, c MyCode) {
+func ErrorResponse(ctx *gin.Context, c MyCode) {
 	rd := &ResponseData{
 		Code:    c,
 		Message: c.GetMsg(),
 		Data:    nil,
 	}
-	ctx.JSON(code, rd)
+	ctx.JSON(int(c), rd)
 }
 
 //ErrorWithMsgResponse 自定义错误响应

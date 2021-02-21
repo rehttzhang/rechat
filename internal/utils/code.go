@@ -4,7 +4,6 @@ package utils
 type MyCode int64
 
 const (
-	CodeError           MyCode = 400
 	CodeSuccess         MyCode = 200
 	CodeInvalidParams   MyCode = 10001
 	CodeUserExist       MyCode = 10002
