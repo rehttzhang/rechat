@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -51,11 +52,12 @@ func ParseToken(tokenString string) (*MyClaims, error) {
 	tokenClaims, err := jwt.ParseWithClaims(tokenString, &MyClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return mySecret, nil
 	})
-	if tokenClaims != nil {
-		//从tokenClaims中获取Claims对象，并使用断言将对象转换为需要的*MyClaims
-		if claims, ok := tokenClaims.Claims.(*MyClaims); ok && tokenClaims.Valid {
-			return claims, nil
-		}
+	if err != nil {
+		return nil, err
 	}
-	return nil, err
+	//从tokenClaims中获取Claims对象，并使用断言将对象转换为需要的*MyClaims
+	if claims, ok := tokenClaims.Claims.(*MyClaims); ok && tokenClaims.Valid {
+		return claims, nil
+	}
+	return nil, errors.New("Invalid token")
 }

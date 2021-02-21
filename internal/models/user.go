@@ -8,5 +8,3 @@ type User struct {
 	//Email        string `json:"email" gorm:"type:varchar(100);comment:注册邮箱"`
 	//Phone        string `json:"phone" gorm:"type:varchar(100);comment:注册手机号"`
 }
-
-//UserInfo 注册登录用模块
